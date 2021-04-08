@@ -1,16 +1,17 @@
 import React, { useEffect, useState, useCallback } from "react";
-import {View, StyleSheet, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView } from "react-native";
 import { Formik } from "formik";
 import * as Yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
 import { registerUser } from '../../store/actions';
 import { Input, Button } from 'react-native-elements';
-import {LogoText, Colors, showToast} from "../../utils/tools";
+import { LogoText, Colors, showToast } from "../../utils/tools";
 
 const requiredField = Yup.string().required('The field is required');
 
 const AuthScreen = () => {
   const dispatch = useDispatch();
+  const error = useSelector(state => state.auth.error);
   const {
     contentContainer, container,
     inputStyle, inputContainerStyle,
@@ -18,17 +19,34 @@ const AuthScreen = () => {
   } = styles;
   const [secureEntry, setSecureEntry] = useState(true);
   const [formType, setFormType] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = (values) => {
+    setLoading(true);
     if (formType) {
       dispatch(registerUser(values))
     } else {
     }
+    setLoading(false);
   }
 
   useEffect(() => {
-    // showToast('info', 'Test message 1', 'Test message 2')
-  }, [])
+    if (error) {
+      showToast('error', 'Sorry', error);
+      setLoading(false);
+      setTimeout(() => {
+        dispatch(clearError())
+      }, 2000)
+    }
+  }, [error]);
+
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        dispatch(clearError())
+      }
+    }, [])
+  )
 
   return (
     <ScrollView contentContainerStyle={contentContainer}>
@@ -95,7 +113,7 @@ const AuthScreen = () => {
                 buttonStyle={{ ...button }}
                 titleStyle={buttonTitle}
                 onPress={handleSubmit}
-                // loading={}
+                loading={loading}
               />
               <Button
                 type="clear"
