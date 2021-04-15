@@ -3,7 +3,9 @@ import { View, StyleSheet, ScrollView } from "react-native";
 import { Formik } from "formik";
 import * as Yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
-import { registerUser } from '../../store/actions';
+import { useFocusEffect } from '@react-navigation/native';
+import { registerUser, loginUser } from '../../store/api';
+import { clearError } from '../../store/actions';
 import { Input, Button } from 'react-native-elements';
 import { LogoText, Colors, showToast } from "../../utils/tools";
 
@@ -26,8 +28,8 @@ const AuthScreen = () => {
     if (formType) {
       dispatch(registerUser(values))
     } else {
+      dispatch(loginUser(values))
     }
-    setLoading(false);
   }
 
   useEffect(() => {
