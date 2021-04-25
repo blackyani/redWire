@@ -1,4 +1,4 @@
-import { firebase, usersCollection} from '../../firebase'
+import { firebase, usersCollection } from '../../firebase'
 import { setUser, setLoginUser } from '../actions';
 
 export const registerUser =  ({email, password}) => async function (dispatch) {
